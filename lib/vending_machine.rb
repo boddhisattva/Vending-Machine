@@ -23,6 +23,29 @@ class VendingMachine
     end
   end
 
+  def add_items(items)
+    items.each do |item|
+      existing_item = @items.detect {|existing_item| existing_item.name == item.name}
+      if existing_item
+        existing_item.quantity += item.quantity
+      else
+        @items << item
+      end
+    end
+  end
+
+  def add_coins(new_coins)
+    valid_amount_inserted = user_coins_contained_in_acceptable_coins?(new_coins.map(&:name), @coins.map(&:name))
+    unless valid_amount_inserted
+      raise "User has entered entered the amount denominations that are not accepted by the machine"
+    else
+      new_coins.each do |new_coin|
+        existing_coin = @coins.detect {|coin| coin.name == new_coin.name}
+        existing_coin.quantity += new_coin.quantity
+      end
+    end
+  end
+
   private
 
     def select_matching_item_by_name(item_name)
@@ -125,6 +148,9 @@ class VendingMachine
         end
       end
       purchase_item(item_name, amount_received)
+    end
+
+    def item_already_present
     end
 
 end
