@@ -1,5 +1,7 @@
 class MaintenancePerson
 
+  attr_reader :vending_machine
+
   def initialize(vending_machine)
     @vending_machine = vending_machine
   end
