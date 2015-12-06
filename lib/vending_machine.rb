@@ -19,7 +19,7 @@ class VendingMachine
     if balance_amount >= 0
       process_purchase(item, amount_received, balance_amount)
     else
-      prompt_user_to_pay_deficit(balance_amount)
+      prompt_user_to_pay_deficit(balance_amount, amount_received, item_name)
     end
   end
 
@@ -102,8 +102,29 @@ class VendingMachine
       end
     end
 
-    def prompt_user_to_pay_deficit(balance_amount)
-
+    def prompt_user_to_pay_deficit(balance_amount, amount_received, item_name)
+      puts "The amount left to complete the purchase is: #{balance_amount}"
+      Coin::COIN_DENOMINATIONS.each do |new_coin|
+        puts "Do you require some #{new_coin.first} coins?(Answer with - y/n)"
+        user_answer = gets.chomp
+        if user_answer == 'n' || user_answer == 'y'
+          next if user_answer == 'n'
+          if user_answer == 'y'
+            puts "Do enter the number(please enter a positive integer only)" \
+                  " of #{new_coin.first} coins you'd like to insert into the machine: "
+            quantity = gets.chomp.to_i
+            if quantity > 0 && quantity.is_a?(Integer)
+              coin = Coin.new(quantity: quantity, name: new_coin.first, denomination: new_coin.last)
+              amount_received << coin
+            else
+              raise "Invalid input. You have not been charged any amount. Please try again"
+            end
+          end
+        else
+          raise "Invalid input. You have not been charged any amount. Please try again"
+        end
+      end
+      purchase_item(item_name, amount_received)
     end
 
 end
